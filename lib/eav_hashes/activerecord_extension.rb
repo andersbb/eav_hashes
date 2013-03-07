@@ -31,6 +31,36 @@ module ActiveRecord
             self.find (ActiveRecord::EavHashes::Util::run_find_expression(key, value, @@#{hash_name}_hash_options))
           end
         END_EVAL
+
+        # If we have a key constraints table, set up method_missing and respond_to_missing
+        # to provide accessors for the key names.
+        if options[:constraint_model]
+          class_eval <<-END_EVAL
+            def key_names
+              @key_names ||= #{options[:constraint_model]}.to_s.constantize.all.collect(&:name)
+            end
+
+            def method_missing(method_name, *args, &block)
+              meth = method_name.to_s
+              if key_names.include? meth
+                #{hash_name}[meth]
+              elsif meth =~ /.+=$/ && key_names.include?(meth.slice(0..-2))
+                #{hash_name}[meth.slice(0..-2)] = args[0]
+              else
+                super
+              end
+            end
+
+            def respond_to_missing?(method_name, include_private = false)
+              meth = method_name.to_s
+              if key_names.include?(meth) || (meth =~ /.+=$/ && key_names.include?(meth.slice(0..-2)))
+                true
+              else
+                super
+              end
+            end
+          END_EVAL
+        end
       end
     end
   end

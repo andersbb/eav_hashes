@@ -18,4 +18,9 @@ p2.name = "Product 2"
 p.save
 p2.save
 
+CustomerAddressKeyName.create(name: 'street')
+CustomerAddressKeyName.create(name: 'city')
+CustomerAddressKeyName.create(name: 'state')
+CustomerAddressKeyName.create(name: 'zip')
+
 puts "Seeded the database."

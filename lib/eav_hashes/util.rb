@@ -13,6 +13,9 @@ module ActiveRecord
       def self.fill_options_hash(options)
         sanity_check options
 
+        # Make sure :constraint_model is populated, even if it's null
+        options[:constraint_model] = nil unless options.has_key?(:constraint_model)
+
         # Generate a unique class name based on the eav_hash's name and owner
         options[:entry_class_name] ||= "#{options[:parent_class_name]}_#{options[:hash_name]}_entry".camelize.to_sym
 
