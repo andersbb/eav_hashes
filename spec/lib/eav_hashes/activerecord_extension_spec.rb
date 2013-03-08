@@ -9,7 +9,7 @@ describe ActiveRecord::EavHashes do
         options[:constraint_model].should be_nil
       end
 
-      it "should allow arbitrary keys to be persisted" do
+      it "should allow arbitrary keys to be assigned, read, and persisted" do
         product = Product.create
         product.tech_specs['xyzzy'] = 'foo'
         product.save!
@@ -45,6 +45,19 @@ describe ActiveRecord::EavHashes do
         customer.city = 'Beverly Hills'
         customer.save!
         customer.reload.city.should == 'Beverly Hills'
+      end
+
+      it "should allow hash assignments with the keys specified in the constraint table" do
+        expect { customer.address['state'] = 'CA' }.to_not raise_error
+        customer.address['state'].should == 'CA'
+      end
+
+      it "should raise ActiveRecord::EavHashes::IllegalKeyError when a key not in the constraint table is assigned" do
+        expect { customer.address['xyzzy'] = 'foo' }.to raise_error ActiveRecord::EavHashes::IllegalKeyError
+      end
+
+      it "should raise ActiveRecord::EavHashes::IllegalKeyError when a key not in the constraint table is read" do
+        expect { customer.address['xyzzy'] }.to raise_error ActiveRecord::EavHashes::IllegalKeyError
       end
     end
   end

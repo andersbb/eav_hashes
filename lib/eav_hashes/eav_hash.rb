@@ -1,5 +1,9 @@
 module ActiveRecord
   module EavHashes
+    # Raised when a constraint table is specified and a key is referenced that's not in the
+    # constraint table.
+    class IllegalKeyError < RuntimeError; end
+
     # Wraps a bunch of EavEntries and lets you use them like you would a hash
     # This class should not be used directly and you should instead let eav_hash_for create one for you
     class EavHash
@@ -30,7 +34,7 @@ module ActiveRecord
       # Gets the value of an EAV attribute
       # @param [String, Symbol] key
       def [](key)
-        raise "Key must be a string or a symbol!" unless key.is_a?(String) or key.is_a?(Symbol)
+        validate_key(key)
         load_entries_if_needed
         return @entries[key].value if @entries[key]
         nil
@@ -123,7 +127,7 @@ module ActiveRecord
 
     private
       def update_or_create_entry(key, value)
-        raise "Key must be a string or a symbol!" unless key.is_a?(String) or key.is_a?(Symbol)
+        validate_key(key)
         load_entries_if_needed
 
         @changes_made = true
@@ -141,6 +145,12 @@ module ActiveRecord
 
           value
         end
+      end
+
+      # Validate key types and validate them against the constraint table if one is specified
+      def validate_key(key)
+        raise "Key must be a string or a symbol!" unless key.is_a?(String) or key.is_a?(Symbol)
+        raise IllegalKeyError.new if @options[:constraint_model] && !@owner.key_names.include?(key.to_s)
       end
 
       # Since entries are lazy-loaded, this is called just before an operation on an entry happens and
