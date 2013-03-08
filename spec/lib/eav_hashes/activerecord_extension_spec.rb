@@ -59,6 +59,13 @@ describe ActiveRecord::EavHashes do
       it "should raise ActiveRecord::EavHashes::IllegalKeyError when a key not in the constraint table is read" do
         expect { customer.address['xyzzy'] }.to raise_error ActiveRecord::EavHashes::IllegalKeyError
       end
+
+      context "and a constraint column is specified" do
+        it "should read key names from the specified column instead of from 'name'" do
+          package = Package.create
+          package.key_names.sort.should == %w(width height depth).sort
+        end
+      end
     end
   end
 end

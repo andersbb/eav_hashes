@@ -23,4 +23,8 @@ CustomerAddressKeyName.create(name: 'city')
 CustomerAddressKeyName.create(name: 'state')
 CustomerAddressKeyName.create(name: 'zip')
 
+PackageDimensionKeyName.create(dimension: 'width')
+PackageDimensionKeyName.create(dimension: 'height')
+PackageDimensionKeyName.create(dimension: 'depth')
+
 puts "Seeded the database."

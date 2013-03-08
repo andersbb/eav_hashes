@@ -37,7 +37,7 @@ module ActiveRecord
         if options[:constraint_model]
           class_eval <<-END_EVAL
             def key_names
-              @key_names ||= #{options[:constraint_model]}.to_s.constantize.all.collect(&:name)
+              @key_names ||= #{options[:constraint_model]}.to_s.constantize.all.collect(&:#{options[:constraint_column]})
             end
 
             def method_missing(method_name, *args, &block)
