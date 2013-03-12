@@ -47,6 +47,11 @@ describe ActiveRecord::EavHashes do
         customer.reload.city.should == 'Beverly Hills'
       end
 
+      it "should allow the accessors to be mass-assigned and persisted" do
+        customer2 = Customer.create(street: 'Sunset Boulevard')
+        customer2.reload.street.should == 'Sunset Boulevard'
+      end
+
       it "should allow hash assignments with the keys specified in the constraint table" do
         expect { customer.address['state'] = 'CA' }.to_not raise_error
         customer.address['state'].should == 'CA'

@@ -37,7 +37,14 @@ module ActiveRecord
         if options[:constraint_model]
           class_eval <<-END_EVAL
             def key_names
-              @key_names ||= #{options[:constraint_model]}.to_s.constantize.all.collect(&:#{options[:constraint_column]})
+              # When we first load the key names, also make them attr_accessible
+              unless @key_names
+                @key_names = #{options[:constraint_model]}.to_s.constantize.all.collect(&:#{options[:constraint_column]})
+                @key_names.each do |k|
+                  self.class.class_eval("attr_accessible :" + k)
+                end
+              end
+              @key_names
             end
 
             def method_missing(method_name, *args, &block)
