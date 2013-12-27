@@ -1,7 +1,7 @@
 require 'rails/generators'
 require 'rails/generators/active_record'
 
-class EavMigrationGenerator < ActiveRecord::Generators::Base
+class EavTypedMigrationGenerator < ActiveRecord::Generators::Base
 
   source_root File.expand_path "../templates", __FILE__
   source_root File.expand_path "../..", __FILE__
