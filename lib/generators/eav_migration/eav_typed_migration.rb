@@ -15,7 +15,7 @@ class EavMigrationGenerator < ActiveRecord::Generators::Base
 
   def create_eav_migration
     p name
-    migration_template "eav_migration.erb", "db/migrate/#{migration_file_name}.rb"
+    migration_template "eav_typed_migration.erb", "db/migrate/#{migration_file_name}.rb"
   end
 
 end

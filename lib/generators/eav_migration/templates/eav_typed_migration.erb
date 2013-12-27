@@ -1,0 +1,17 @@
+class <%= migration_name %> < ActiveRecord::Migration
+    def change
+    <% ['integer', 'float', 'string', 'datetime', 'text'].each do |type_name| %>
+        create_table :<%= "#{table_name}_#{type_name}" %> do |t|
+            t.references :<%= model_association_name %>, :null => false
+            t.references :attribute_id, :null => false
+            t.<%= type_name %> :value, :null => false
+
+            t.timestamps
+        end
+
+        add_index :<%= "#{table_name}_#{type_name}" %>, :<%= model_association_name %>_id
+        add_index :<%= "#{table_name}_#{type_name}" %>, :attribute_id
+        <% # ToDo: May make sense to add a unique index on the pair attribute_id and value %>
+    <% end %>
+    end
+end
